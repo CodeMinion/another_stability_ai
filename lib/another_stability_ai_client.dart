@@ -30,7 +30,7 @@ class StabilityAiClient {
   Future<Account> getAccount({
     String? apiKey,
   }) async {
-    return _userService.getAccount(apiKey: apiKey ?? _apiKey ?? "");
+    return _userService.getAccount(apiKey: apiKey ?? _apiKey);
   }
 
   ///
