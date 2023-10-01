@@ -1,6 +1,6 @@
 name: another_stability_ai
 description: A Flutter package for the Stability AI APIs.
-version: 1.0.0
+version: 1.1.0
 homepage: https://github.com/CodeMinion/another_stability_ai
 
 environment:

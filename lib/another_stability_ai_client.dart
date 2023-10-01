@@ -100,8 +100,144 @@ class StabilityAiClient {
         clientVersion: clientVersion);
   }
 
-// TODO image-to-image
-// TODO image-to-image/upscale
-// TODO image-to-image/masking
+  ///
+  /// Modify an image based on a text prompt
+  ///
+  Future<List<ImageResponse>> generateImageBase64FromImage({
+    String? apiKey,
+    required String engineId,
+    required ImageToImageRequestParams params,
+    required Uint8List initImage,
+    String? organization,
+    String? clientId,
+    String? clientVersion,
+  }) async {
+    return _generationService.generateImageBase64FromImage(
+        apiKey: apiKey ?? _apiKey,
+        engineId: engineId,
+        params: params,
+        initImage: initImage,
+        organization: organization,
+        clientId: clientId,
+        clientVersion: clientVersion);
+  }
+
+  ///
+  /// Modify an image based on a text prompt and returns the image PNG bytes.
+  ///
+  Future<Uint8List> generateImagePngFromImage({
+    required String engineId,
+    required ImageToImageRequestParams params,
+    required Uint8List initImage,
+    String? apiKey,
+    String? organization,
+    String? clientId,
+    String? clientVersion,
+  }) async {
+    return _generationService.generateImagePngFromImage(
+        apiKey: apiKey ?? _apiKey,
+        engineId: engineId,
+        params: params,
+        initImage: initImage,
+        organization: organization,
+        clientId: clientId,
+        clientVersion: clientVersion);
+  }
+
+  ///
+  /// Create a higher resolution version of an input image.
+  ///
+  /// This operation outputs an image with a maximum pixel count of 4,194,304.
+  /// This is equivalent to dimensions such as 2048x2048 and 4096x1024.
+  ///
+  Future<List<ImageResponse>> upScaleImageBase64({
+    required String engineId,
+    required ImageUpScaleRequestParams params,
+    required Uint8List image,
+    String? apiKey,
+    String? organization,
+    String? clientId,
+    String? clientVersion,
+  }) async {
+    return _generationService.upScaleImageBase64(
+        apiKey: apiKey ?? _apiKey,
+        engineId: engineId,
+        params: params,
+        image: image,
+        organization: organization,
+        clientId: clientId,
+        clientVersion: clientVersion);
+  }
+
+  ///
+  /// Create a higher resolution version of an input image.
+  ///
+  /// This operation outputs an image with a maximum pixel count of 4,194,304.
+  /// This is equivalent to dimensions such as 2048x2048 and 4096x1024.
+  /// Returns the image bytes.
+  ///
+  Future<Uint8List> upScaleImagePng({
+    required String engineId,
+    required ImageUpScaleRequestParams params,
+    required Uint8List image,
+    String? apiKey,
+    String? organization,
+    String? clientId,
+    String? clientVersion,
+  }) async {
+    return _generationService.upScaleImagePng(
+        apiKey: apiKey ?? _apiKey,
+        engineId: engineId,
+        params: params,
+        image: image,
+        organization: organization,
+        clientId: clientId,
+        clientVersion: clientVersion);
+  }
+
+  ///
+  /// Selectively modify portions of an image using a mask
+  ///
+  Future<List<ImageResponse>> generateImageBase64WithMask({
+    String? apiKey,
+    required String engineId,
+    required ImageMaskingRequestParam params,
+    required Uint8List initImage,
+    String? organization,
+    String? clientId,
+    String? clientVersion,
+  }) async {
+    return _generationService.generateImageBase64WithMask(
+        apiKey: apiKey ?? _apiKey,
+        engineId: engineId,
+        params: params,
+        initImage: initImage,
+        organization: organization,
+        clientId: clientId,
+        clientVersion: clientVersion);
+  }
+
+  ///
+  /// Selectively modify portions of an image using a mask
+  /// Returns the bytes of the image PNG
+  Future<Uint8List> generateImagePngWithMask({
+    required String engineId,
+    required ImageMaskingRequestParam params,
+    required Uint8List initImage,
+    String? apiKey,
+    String? organization,
+    String? clientId,
+    String? clientVersion,
+  }) async {
+    return _generationService.generateImagePngWithMask(
+        apiKey: apiKey ?? _apiKey,
+        engineId: engineId,
+        params: params,
+        initImage: initImage,
+        organization: organization,
+        clientId: clientId,
+        clientVersion: clientVersion);
+  }
+
 
 }

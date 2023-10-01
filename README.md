@@ -11,7 +11,7 @@ The following table includes details about the level at which all the APIs are s
 |------------|--------------------|
 | User       | 100%               |
 | Engines    | 100%               |
-| Generation | 25%                |
+| Generation | 100%               |
 
 ## Getting started
 
@@ -42,6 +42,20 @@ List<ImageResponse> images = await client.generateImageBase64FromText(engineId: 
 
 // Request the image as a PNG bytes
 Uint8List pngBytes = await client.generateImagePngFromText(engineId: "stable-diffusion-v1-5", params: requestParams);
+
+// Request image generation with an image as a source.
+TextPrompt prompt = TextPrompt(text: "I want the background to include a dragon");
+ImageToImageRequestParams requestParams = ImageToImageRequestParams.imageStrength(stylePreset: StylePreset.anime, textPrompts: [prompt]);
+List<ImageResponse> images = await client.generateImageBase64FromImage(engineId: "stable-diffusion-v1-5", initImage: File("result.png").readAsBytesSync() , params: requestParams);
+    
+// Upscale image request.
+ImageUpScaleRequestParams requestParams = ImageUpScaleRequestParams.realESRGANUpscale(scale: ScaleUpscaleParam(dimension: ScaleDimension.width, value: 1024));
+List<ImageResponse> images = await client.upScaleImageBase64(engineId: "esrgan-v1-x2plus", image: File("result.png").readAsBytesSync() , params: requestParams);
+
+// Image masking request.
+ImageMaskingRequestParam requestParams = ImageMaskingRequestParam.maskImageWhite(textPrompts: [prompt], maskImage: File("mask.png").readAsBytesSync(), stylePreset: StylePreset.anime);
+List<ImageResponse> images = await client.generateImageBase64WithMask(engineId: "stable-inpainting-512-v2-0", initImage: File("result.png").readAsBytesSync() , params: requestParams);
+     
 ```  
 
   

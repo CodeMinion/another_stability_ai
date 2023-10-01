@@ -110,10 +110,9 @@ ImageToImageRequestParams _$ImageToImageRequestParamsFromJson(
       initImageMode: $enumDecodeNullable(
               _$InitImageModeEnumMap, json['init_image_mode']) ??
           InitImageMode.imageStrength,
-      imageStrength: (json['image_strength'] as num?)?.toDouble() ?? 0.35,
-      stepScheduleStart:
-          (json['step_schedule_start'] as num?)?.toDouble() ?? 0.65,
-      stepScheduleEnd: (json['step_schedule_end'] as num?)?.toDouble() ?? 0,
+      imageStrength: (json['image_strength'] as num?)?.toDouble(),
+      stepScheduleStart: (json['step_schedule_start'] as num?)?.toDouble(),
+      stepScheduleEnd: (json['step_schedule_end'] as num?)?.toDouble(),
       textPrompts: (json['text_prompts'] as List<dynamic>)
           .map((e) => TextPrompt.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -133,12 +132,6 @@ Map<String, dynamic> _$ImageToImageRequestParamsToJson(
   final val = <String, dynamic>{
     'text_prompts': instance.textPrompts,
     'init_image_mode': _$InitImageModeEnumMap[instance.initImageMode]!,
-    'image_strength': instance.imageStrength,
-    'step_schedule_start': instance.stepScheduleStart,
-    'step_schedule_end': instance.stepScheduleEnd,
-    'cfg_scale': instance.cfgScale,
-    'clip_guidance_preset':
-        _$ClipGuidancePresetEnumMap[instance.clipGuidancePreset]!,
   };
 
   void writeNotNull(String key, dynamic value) {
@@ -147,6 +140,12 @@ Map<String, dynamic> _$ImageToImageRequestParamsToJson(
     }
   }
 
+  writeNotNull('image_strength', instance.imageStrength);
+  writeNotNull('step_schedule_start', instance.stepScheduleStart);
+  writeNotNull('step_schedule_end', instance.stepScheduleEnd);
+  val['cfg_scale'] = instance.cfgScale;
+  val['clip_guidance_preset'] =
+      _$ClipGuidancePresetEnumMap[instance.clipGuidancePreset]!;
   writeNotNull('sampler', _$SamplerEnumMap[instance.sampler]);
   val['samples'] = instance.samples;
   val['seed'] = instance.seed;
@@ -160,50 +159,42 @@ const _$InitImageModeEnumMap = {
   InitImageMode.stepSchedule: 'STEP_SCHEDULE',
 };
 
-RealESRGANUpscaleRequestParams _$RealESRGANUpscaleRequestParamsFromJson(
+ImageUpScaleRequestParams _$ImageUpScaleRequestParamsFromJson(
         Map<String, dynamic> json) =>
-    RealESRGANUpscaleRequestParams(
-      width: json['width'] as int,
-      height: json['height'] as int,
-    );
-
-Map<String, dynamic> _$RealESRGANUpscaleRequestParamsToJson(
-        RealESRGANUpscaleRequestParams instance) =>
-    <String, dynamic>{
-      'width': instance.width,
-      'height': instance.height,
-    };
-
-LatentUpscalerUpscaleRequestParams _$LatentUpscalerUpscaleRequestParamsFromJson(
-        Map<String, dynamic> json) =>
-    LatentUpscalerUpscaleRequestParams(
-      width: json['width'] as int,
-      height: json['height'] as int,
-      textPrompts: (json['text_prompts'] as List<dynamic>)
-          .map((e) => TextPrompt.fromJson(e as Map<String, dynamic>))
+    ImageUpScaleRequestParams(
+      width: json['width'] as int?,
+      height: json['height'] as int?,
+      textPrompts: (json['text_prompts'] as List<dynamic>?)
+          ?.map((e) => TextPrompt.fromJson(e as Map<String, dynamic>))
           .toList(),
-      seed: json['seed'] as int? ?? 0,
-      steps: json['steps'] as int? ?? 50,
-      cfgScale: json['cfg_scale'] as int? ?? 7,
+      seed: json['seed'] as int?,
+      steps: json['steps'] as int?,
+      cfgScale: json['cfg_scale'] as int?,
     );
 
-Map<String, dynamic> _$LatentUpscalerUpscaleRequestParamsToJson(
-        LatentUpscalerUpscaleRequestParams instance) =>
-    <String, dynamic>{
-      'width': instance.width,
-      'height': instance.height,
-      'text_prompts': instance.textPrompts,
-      'seed': instance.seed,
-      'steps': instance.steps,
-      'cfg_scale': instance.cfgScale,
-    };
+Map<String, dynamic> _$ImageUpScaleRequestParamsToJson(
+    ImageUpScaleRequestParams instance) {
+  final val = <String, dynamic>{};
 
-ImageToImageUpscaleRequestParams _$ImageToImageUpscaleRequestParamsFromJson(
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('width', instance.width);
+  writeNotNull('height', instance.height);
+  writeNotNull('text_prompts', instance.textPrompts);
+  writeNotNull('seed', instance.seed);
+  writeNotNull('steps', instance.steps);
+  writeNotNull('cfg_scale', instance.cfgScale);
+  return val;
+}
+
+ImageMaskingRequestParam _$ImageMaskingRequestParamFromJson(
         Map<String, dynamic> json) =>
-    ImageToImageUpscaleRequestParams(
-      maskSource:
-          $enumDecodeNullable(_$MaskSourceEnumMap, json['mask_source']) ??
-              MaskSource.maskImageBlack,
+    ImageMaskingRequestParam(
+      maskSource: $enumDecode(_$MaskSourceEnumMap, json['mask_source']),
       textPrompts: (json['text_prompts'] as List<dynamic>)
           .map((e) => TextPrompt.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -218,8 +209,8 @@ ImageToImageUpscaleRequestParams _$ImageToImageUpscaleRequestParamsFromJson(
       stylePreset: $enumDecode(_$StylePresetEnumMap, json['style_preset']),
     );
 
-Map<String, dynamic> _$ImageToImageUpscaleRequestParamsToJson(
-    ImageToImageUpscaleRequestParams instance) {
+Map<String, dynamic> _$ImageMaskingRequestParamToJson(
+    ImageMaskingRequestParam instance) {
   final val = <String, dynamic>{
     'text_prompts': instance.textPrompts,
     'mask_source': _$MaskSourceEnumMap[instance.maskSource]!,

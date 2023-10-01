@@ -1,10 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'generation_dto.g.dart';
 
 @JsonSerializable(includeIfNull: false)
 class TextToImageRequestParams {
-
   /// Height of the image in pixels. Must be in increments of 64 and pass the following validation:
   ///
   /// For 512 engines: 262,144 ≤ height * width ≤ 1,048,576
@@ -59,8 +60,16 @@ class TextToImageRequestParams {
   StylePreset stylePreset;
 
   TextToImageRequestParams(
-      {this.width = 512, this.height = 512, required this.textPrompts, this.cfgScale = 7, this.clipGuidancePreset = ClipGuidancePreset
-          .none, this.sampler, this.samples = 1, this.seed = 0, this.steps = 50, required this.stylePreset });
+      {this.width = 512,
+      this.height = 512,
+      required this.textPrompts,
+      this.cfgScale = 7,
+      this.clipGuidancePreset = ClipGuidancePreset.none,
+      this.sampler,
+      this.samples = 1,
+      this.seed = 0,
+      this.steps = 50,
+      required this.stylePreset});
 
   factory TextToImageRequestParams.fromJson(Map<String, dynamic> json) =>
       _$TextToImageRequestParamsFromJson(json);
@@ -72,7 +81,6 @@ class TextToImageRequestParams {
     return toJson().toString();
   }
 }
-
 
 @JsonSerializable(includeIfNull: false)
 class TextPrompt {
@@ -94,7 +102,6 @@ class TextPrompt {
 
 @JsonSerializable(includeIfNull: false)
 class ImageToImageRequestParams {
-
   @JsonKey(name: "text_prompts")
   List<TextPrompt> textPrompts;
 
@@ -108,7 +115,7 @@ class ImageToImageRequestParams {
   InitImageMode initImageMode;
 
   @JsonKey(name: "image_strength")
-  double imageStrength = 0.35;
+  double? imageStrength;
 
   ///
   /// number (StepScheduleStart) [ 0 .. 1 ]
@@ -120,7 +127,7 @@ class ImageToImageRequestParams {
   /// you the init_image, where a value of 1 would return you a completely
   /// different image.)
   @JsonKey(name: "step_schedule_start")
-  double stepScheduleStart;
+  double? stepScheduleStart;
 
   /// Skips a proportion of the end of the diffusion steps, allowing
   /// the init_image to influence the final generated image. Lower
@@ -128,7 +135,7 @@ class ImageToImageRequestParams {
   /// while higher values will result in more influence from the
   /// diffusion steps.
   @JsonKey(name: "step_schedule_end")
-  double stepScheduleEnd;
+  double? stepScheduleEnd;
 
   /// How strictly the diffusion process adheres to
   /// the prompt text (higher values keep your image closer to your prompt)
@@ -158,13 +165,69 @@ class ImageToImageRequestParams {
   StylePreset stylePreset;
 
   ImageToImageRequestParams(
-      {this.initImageMode = InitImageMode.imageStrength, this.imageStrength = 0.35,
-        this.stepScheduleStart = 0.65, this.stepScheduleEnd = 0,
-        required this.textPrompts, this.cfgScale = 7, this.clipGuidancePreset = ClipGuidancePreset
-          .none, this.sampler, this.samples = 1, this.seed = 0, this.steps = 50, required this.stylePreset });
+      {this.initImageMode = InitImageMode.imageStrength,
+      this.imageStrength,
+      this.stepScheduleStart,
+      this.stepScheduleEnd,
+      required this.textPrompts,
+      this.cfgScale = 7,
+      this.clipGuidancePreset = ClipGuidancePreset.none,
+      this.sampler,
+      this.samples = 1,
+      this.seed = 0,
+      this.steps = 50,
+      required this.stylePreset});
 
   factory ImageToImageRequestParams.fromJson(Map<String, dynamic> json) =>
       _$ImageToImageRequestParamsFromJson(json);
+
+  factory ImageToImageRequestParams.imageStrength(
+      {required List<TextPrompt> textPrompts,
+      double imageStrength = 0.35,
+      int cfgScale = 7,
+      ClipGuidancePreset clipGuidancePreset = ClipGuidancePreset.none,
+      Sampler? sampler,
+      int samples = 1,
+      int seed = 0,
+      int steps = 50,
+      required StylePreset stylePreset}) {
+    return ImageToImageRequestParams(
+        initImageMode: InitImageMode.imageStrength,
+        imageStrength: imageStrength,
+        textPrompts: textPrompts,
+        cfgScale: cfgScale,
+        clipGuidancePreset: clipGuidancePreset,
+        sampler: sampler,
+        samples: samples,
+        seed: seed,
+        steps: steps,
+        stylePreset: stylePreset);
+  }
+
+  factory ImageToImageRequestParams.stepSchedule(
+      {required List<TextPrompt> textPrompts,
+      double stepScheduleStart = 0.65,
+      double stepScheduleEnd = 0,
+      int cfgScale = 7,
+      ClipGuidancePreset clipGuidancePreset = ClipGuidancePreset.none,
+      Sampler? sampler,
+      int samples = 1,
+      int seed = 0,
+      int steps = 50,
+      required StylePreset stylePreset}) {
+    return ImageToImageRequestParams(
+        initImageMode: InitImageMode.stepSchedule,
+        stepScheduleStart: stepScheduleStart,
+        stepScheduleEnd: stepScheduleEnd,
+        textPrompts: textPrompts,
+        cfgScale: cfgScale,
+        clipGuidancePreset: clipGuidancePreset,
+        sampler: sampler,
+        samples: samples,
+        seed: seed,
+        steps: steps,
+        stylePreset: stylePreset);
+  }
 
   Map<String, dynamic> toJson() => _$ImageToImageRequestParamsToJson(this);
 
@@ -175,51 +238,68 @@ class ImageToImageRequestParams {
 }
 
 @JsonSerializable(includeIfNull: false)
-class RealESRGANUpscaleRequestParams {
-
-  int width;
-  int height;
-
-  RealESRGANUpscaleRequestParams({required this.width, required this.height});
-
-  factory RealESRGANUpscaleRequestParams.fromJson(Map<String, dynamic> json) =>
-      _$RealESRGANUpscaleRequestParamsFromJson(json);
-
-  Map<String, dynamic> toJson() => _$RealESRGANUpscaleRequestParamsToJson(this);
-
-  @override
-  String toString() {
-    return toJson().toString();
-  }
-}
-
-@JsonSerializable(includeIfNull: false)
-class LatentUpscalerUpscaleRequestParams {
-
-  int width;
-  int height;
+class ImageUpScaleRequestParams {
+  int? width;
+  int? height;
 
   @JsonKey(name: "text_prompts")
-  List<TextPrompt> textPrompts;
+  List<TextPrompt>? textPrompts;
 
   /// Random noise seed (omit this option or use 0 for a random seed)
-  int seed;
+  int? seed;
 
   /// Number of diffusion steps to run
-  int steps;
+  int? steps;
 
   /// How strictly the diffusion process adheres to
   /// the prompt text (higher values keep your image closer to your prompt)
   @JsonKey(name: "cfg_scale")
-  int cfgScale;
+  int? cfgScale;
 
+  ImageUpScaleRequestParams(
+      {this.width,
+      this.height,
+      this.textPrompts,
+      this.seed,
+      this.steps,
+      this.cfgScale});
 
-  LatentUpscalerUpscaleRequestParams({required this.width, required this.height, required this.textPrompts, this.seed = 0, this.steps = 50, this.cfgScale = 7});
+  factory ImageUpScaleRequestParams.fromJson(Map<String, dynamic> json) =>
+      _$ImageUpScaleRequestParamsFromJson(json);
 
-  factory LatentUpscalerUpscaleRequestParams.fromJson(Map<String, dynamic> json) =>
-      _$LatentUpscalerUpscaleRequestParamsFromJson(json);
+  factory ImageUpScaleRequestParams.realESRGANUpscale(
+      {required ScaleUpscaleParam scale}) {
+    if (scale.dimension == ScaleDimension.width) {
+      return ImageUpScaleRequestParams(width: scale.value);
+    } else {
+      return ImageUpScaleRequestParams(height: scale.value);
+    }
+  }
 
-  Map<String, dynamic> toJson() => _$LatentUpscalerUpscaleRequestParamsToJson(this);
+  factory ImageUpScaleRequestParams.latentUpScale(
+      {required ScaleUpscaleParam scale,
+      required List<TextPrompt> textPrompts,
+      int seed = 0,
+      int steps = 50,
+      int cfgScale = 7}) {
+    if (scale.dimension == ScaleDimension.width) {
+      return ImageUpScaleRequestParams(
+          width: scale.value,
+          textPrompts: textPrompts,
+          seed: seed,
+          steps: steps,
+          cfgScale: cfgScale);
+    } else {
+      return ImageUpScaleRequestParams(
+          height: scale.value,
+          textPrompts: textPrompts,
+          seed: seed,
+          steps: steps,
+          cfgScale: cfgScale);
+    }
+  }
+
+  Map<String, dynamic> toJson() => _$ImageUpScaleRequestParamsToJson(this);
 
   @override
   String toString() {
@@ -227,9 +307,17 @@ class LatentUpscalerUpscaleRequestParams {
   }
 }
 
-@JsonSerializable(includeIfNull: false)
-class ImageToImageUpscaleRequestParams {
+class ScaleUpscaleParam {
+  ScaleDimension dimension;
+  int value;
 
+  ScaleUpscaleParam({required this.dimension, required this.value});
+}
+
+enum ScaleDimension { width, height }
+
+@JsonSerializable(includeIfNull: false)
+class ImageMaskingRequestParam {
   @JsonKey(name: "text_prompts")
   List<TextPrompt> textPrompts;
 
@@ -240,8 +328,8 @@ class ImageToImageUpscaleRequestParams {
   @JsonKey(name: "mask_source")
   MaskSource maskSource;
 
-  //@JsonKey(name: "mask_image")
-  //Uint8List maskImage;
+  @JsonKey(includeFromJson: false, includeToJson: false, name: "mask_image")
+  Uint8List? maskImage;
 
   /// How strictly the diffusion process adheres to
   /// the prompt text (higher values keep your image closer to your prompt)
@@ -270,15 +358,108 @@ class ImageToImageUpscaleRequestParams {
   @JsonKey(name: "style_preset")
   StylePreset stylePreset;
 
-  ImageToImageUpscaleRequestParams(
-      {this.maskSource = MaskSource.maskImageBlack,
-        required this.textPrompts, this.cfgScale = 7, this.clipGuidancePreset = ClipGuidancePreset
-          .none, this.sampler, this.samples = 1, this.seed = 0, this.steps = 50, required this.stylePreset });
+  ImageMaskingRequestParam(
+      {required this.maskSource,
+      required this.textPrompts,
+      this.maskImage,
+      this.cfgScale = 7,
+      this.clipGuidancePreset = ClipGuidancePreset.none,
+      this.sampler,
+      this.samples = 1,
+      this.seed = 0,
+      this.steps = 50,
+      required this.stylePreset});
 
-  factory ImageToImageUpscaleRequestParams.fromJson(Map<String, dynamic> json) =>
-      _$ImageToImageUpscaleRequestParamsFromJson(json);
+  ///
+  /// will use the black pixels of the mask_image as the mask,
+  /// where black pixels are completely replaced and white pixels
+  /// are unchanged
+  ///
+  factory ImageMaskingRequestParam.maskImageBlack(
+      {required List<TextPrompt> textPrompts,
+      required Uint8List maskImage,
+      int cfgScale = 7,
+      ClipGuidancePreset clipGuidancePreset = ClipGuidancePreset.none,
+      Sampler? sampler,
+      int samples = 1,
+      int seed = 0,
+      int steps = 50,
+      required StylePreset stylePreset}) {
+    return ImageMaskingRequestParam(
+      maskSource: MaskSource.maskImageBlack,
+      maskImage: maskImage,
+      textPrompts: textPrompts,
+      stylePreset: stylePreset,
+      cfgScale: cfgScale,
+      clipGuidancePreset: clipGuidancePreset,
+      sampler: sampler,
+      samples: samples,
+      seed: seed,
+      steps: steps,
+    );
+  }
 
-  Map<String, dynamic> toJson() => _$ImageToImageUpscaleRequestParamsToJson(this);
+  ///
+  ///  will use the white pixels of the mask_image as the mask,
+  ///  where white pixels are completely replaced and black pixels
+  ///  are unchanged
+  ///
+  factory ImageMaskingRequestParam.maskImageWhite(
+      {required List<TextPrompt> textPrompts,
+        required Uint8List maskImage,
+        int cfgScale = 7,
+        ClipGuidancePreset clipGuidancePreset = ClipGuidancePreset.none,
+        Sampler? sampler,
+        int samples = 1,
+        int seed = 0,
+        int steps = 50,
+        required StylePreset stylePreset}) {
+    return ImageMaskingRequestParam(
+      maskSource: MaskSource.maskImageWhite,
+      maskImage: maskImage,
+      textPrompts: textPrompts,
+      stylePreset: stylePreset,
+      cfgScale: cfgScale,
+      clipGuidancePreset: clipGuidancePreset,
+      sampler: sampler,
+      samples: samples,
+      seed: seed,
+      steps: steps,
+    );
+  }
+
+  ///
+  /// will use the alpha channel of the init_image as the mask,
+  /// where fully transparent pixels are completely replaced and
+  /// fully opaque pixels are unchanged
+  ///
+  factory ImageMaskingRequestParam.initImageAlpha(
+      {required List<TextPrompt> textPrompts,
+        required Uint8List maskImage,
+        int cfgScale = 7,
+        ClipGuidancePreset clipGuidancePreset = ClipGuidancePreset.none,
+        Sampler? sampler,
+        int samples = 1,
+        int seed = 0,
+        int steps = 50,
+        required StylePreset stylePreset}) {
+    return ImageMaskingRequestParam(
+      maskSource: MaskSource.initImageAlpha,
+      textPrompts: textPrompts,
+      stylePreset: stylePreset,
+      cfgScale: cfgScale,
+      clipGuidancePreset: clipGuidancePreset,
+      sampler: sampler,
+      samples: samples,
+      seed: seed,
+      steps: steps,
+    );
+  }
+
+  factory ImageMaskingRequestParam.fromJson(Map<String, dynamic> json) =>
+      _$ImageMaskingRequestParamFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ImageMaskingRequestParamToJson(this);
 
   @override
   String toString() {
@@ -288,7 +469,6 @@ class ImageToImageUpscaleRequestParams {
 
 @JsonSerializable(includeIfNull: false)
 class ImageResponse {
-
   String? base64;
   FinishReason finishReason;
   int seed;
@@ -324,22 +504,17 @@ class ImageResponseListDto {
 }
 
 enum MaskSource {
-
   @JsonValue("MASK_IMAGE_WHITE")
   maskImageWhite,
-
   @JsonValue("MASK_IMAGE_BLACK")
   maskImageBlack,
-
   @JsonValue("INIT_IMAGE_ALPHA")
   initImageAlpha
-
 }
 
-enum InitImageMode{
+enum InitImageMode {
   @JsonValue("IMAGE_STRENGTH")
   imageStrength,
-
   @JsonValue("STEP_SCHEDULE")
   stepSchedule,
 }
@@ -427,13 +602,10 @@ enum GenerationAcceptType {
 }
 
 enum FinishReason {
-
   @JsonValue("CONTENT_FILTERED")
   contentFiltered,
-
   @JsonValue("ERROR")
   error,
-
   @JsonValue("SUCCESS")
   success,
 }
