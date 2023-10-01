@@ -1,7 +1,7 @@
 
 # Another Stability AI
 
-The another_stability_ai package is a Flutter package for the Stability AI APIs https://platform.stability.ai/docs/api-reference. It exposes the APIs via the StabilityAiClient.
+The another_stability_ai package is a Flutter package for the Stability AI APIs. It exposes the APIs via the StabilityAiClient.
 
 ## Features
 
